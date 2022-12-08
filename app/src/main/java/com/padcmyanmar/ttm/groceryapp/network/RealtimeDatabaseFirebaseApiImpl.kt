@@ -1,6 +1,5 @@
 package com.padcmyanmar.ttm.groceryapp.network
 
-import android.graphics.Bitmap
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -34,16 +33,10 @@ object RealtimeDatabaseFirebaseApiImpl  : FirebaseApi {
             }
         })
     }
+    override fun addGrocery(name: String, description: String, amount: Int) {
 
-    override fun addGrocery(name: String, description: String, amount: Int, image: String) {
-        TODO("Not yet implemented")
+        database.child("groceries").child(name).setValue(GroceryVO(name,description,amount))
     }
 
-    override fun deleteGrocery(name: String) {
-        TODO("Not yet implemented")
-    }
 
-    override fun uploadImageAndEditGrocery(image: Bitmap, grocery: GroceryVO) {
-        TODO("Not yet implemented")
-    }
 }
