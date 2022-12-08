@@ -38,5 +38,9 @@ object RealtimeDatabaseFirebaseApiImpl  : FirebaseApi {
         database.child("groceries").child(name).setValue(GroceryVO(name,description,amount))
     }
 
+    override fun deleteGrocery(name: String) {
+        database.child("groceries").child(name).removeValue()
+    }
+
 
 }

@@ -10,6 +10,9 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_AMOUNT
+import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_DESCRIPTION
+import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_NAME
 
 import com.padcmyanmar.ttm.groceryapp.mvp.presenters.MainPresenter
 import com.padcmyanmar.ttm.groceryapp.mvp.presenters.impls.MainPresenterImpl
@@ -18,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity(), MainView {
 
-    private val mAdapter: GroceryAdapter = GroceryAdapter()
+    private lateinit var mAdapter: GroceryAdapter
     private lateinit var mPresenter: MainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +48,7 @@ class MainActivity : BaseActivity(), MainView {
     }
 
     private fun setUpRecyclerView() {
+        mAdapter = GroceryAdapter(mPresenter)
         rvGroceries.adapter = mAdapter
         rvGroceries.layoutManager =
             LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
@@ -64,6 +68,16 @@ class MainActivity : BaseActivity(), MainView {
 
     override fun showGroceryData(groceryList: List<GroceryVO>) {
         mAdapter.setNewData(groceryList)
+    }
+
+    override fun showGroceryDialog(name: String, description: String, amount: String) {
+        val groceryDialog = GroceryDialogFragment.newFragment()
+        val bundle = Bundle()
+        bundle.putString(BUNDLE_NAME, name)
+        bundle.putString(BUNDLE_DESCRIPTION,description)
+        bundle.putString(BUNDLE_AMOUNT, amount)
+        groceryDialog.arguments = bundle
+        groceryDialog.show(supportFragmentManager, GroceryDialogFragment.TAG_ADD_GROCERY_DIALOG)
     }
 
     override fun showErrorMessage(message: String) {

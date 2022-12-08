@@ -10,4 +10,9 @@ interface GroceryModel {
     fun getGroceries(onSuccess: (List<GroceryVO>) -> Unit, onFaiure: (String) -> Unit)
 
     fun addGrocery(name: String ,description : String, amount: Int)
+
+    fun removeGrocery(name: String)
+
+    fun editGrocery(name: String, description: String, amount: Int)
+
 }
