@@ -2,7 +2,8 @@ package com.padcmyanmar.ttm.groceryapp.adapters
 
 
 import androidx.recyclerview.widget.RecyclerView
-import com.zg.burgerjoint.viewholders.BaseViewHolder
+import com.padcmyanmar.ttm.groceryapp.viewholders.BaseViewHolder
+
 
 abstract class BaseRecyclerAdapter<T : BaseViewHolder<W>, W> : RecyclerView.Adapter<T>() {
 
