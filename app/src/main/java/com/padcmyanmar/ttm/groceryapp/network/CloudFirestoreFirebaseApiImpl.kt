@@ -1,6 +1,7 @@
 package com.padcmyanmar.ttm.groceryapp.network
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.padcmyanmar.ttm.groceryapp.data.vos.GroceryVO
@@ -14,8 +15,33 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
         onFialure: (String) -> Unit
     ) {
         db.collection("groceries")
-            .get()
-            .addOnSuccessListener { result ->
+
+            .addSnapshotListener { value, error ->
+
+                error?.let {
+                    onFialure(it.message ?: "Please check connection")
+                }?: run {
+                    val groceriesList: MutableList<GroceryVO> = arrayListOf()
+                    val result : List<DocumentSnapshot> = value?.documents ?: arrayListOf()
+                    for(document : DocumentSnapshot in result)
+                    {
+                        val data = document.data
+                        var grocery = GroceryVO()
+                        grocery.name = data?.get("name") as String
+                        grocery.description =  data["description"] as String
+                        grocery.amount =  (data["amount"] as Long).toInt()
+
+                        groceriesList.add(grocery)
+
+                    }
+                    onSuccess(groceriesList)
+                }
+
+
+
+
+            }
+          /*  .addOnSuccessListener { result ->
                 val groceriesList: MutableList<GroceryVO> = arrayListOf()
 
                 for(document in result)
@@ -35,7 +61,7 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
             .addOnFailureListener {
                 onFialure(it.message ?: "Please check connection")
             }
-
+*/
 
         /*.addOnCompleteListener { result ->
                 val groceriesList: MutableList<GroceryVO> = arrayListOf()
