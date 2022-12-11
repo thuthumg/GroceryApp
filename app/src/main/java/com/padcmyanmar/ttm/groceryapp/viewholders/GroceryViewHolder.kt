@@ -1,6 +1,7 @@
 package com.padcmyanmar.ttm.groceryapp.viewholders
 
 import android.view.View
+import com.bumptech.glide.Glide
 import com.padcmyanmar.ttm.groceryapp.data.vos.GroceryVO
 import com.padcmyanmar.ttm.groceryapp.delegates.GroceryViewItemActionDelegate
 import kotlinx.android.synthetic.main.view_holder_grocery_item.view.*
@@ -18,7 +19,19 @@ class GroceryViewHolder(itemView: View, private val mDelegate: GroceryViewItemAc
         }
 
         itemView.btnEdit.setOnClickListener {
-            mDelegate.onTapEditGrocery(data.name ?: "", data.description ?: "", data.amount ?: 0)
+            mDelegate.onTapEditGrocery(data.name ?: "",
+                data.description ?: "",
+                data.amount ?: 0,
+            data.image ?: "")
         }
+
+
+        itemView.btnFileUpload.setOnClickListener {
+            mDelegate.onTapFileUpload(data)
+        }
+
+        Glide.with(itemView.context)
+            .load(data.image)
+            .into(itemView.ivGroceryImage)
     }
 }

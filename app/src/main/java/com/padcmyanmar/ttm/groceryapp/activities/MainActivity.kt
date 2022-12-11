@@ -1,28 +1,39 @@
 package com.padcmyanmar.ttm.groceryapp.activities
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.ImageDecoder
+import android.os.Build
 import com.padcmyanmar.ttm.groceryapp.R
 import com.padcmyanmar.ttm.groceryapp.adapters.GroceryAdapter
 import com.padcmyanmar.ttm.groceryapp.data.vos.GroceryVO
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment
 
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_AMOUNT
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_DESCRIPTION
+import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_IMAGE
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_NAME
 
 import com.padcmyanmar.ttm.groceryapp.mvp.presenters.MainPresenter
 import com.padcmyanmar.ttm.groceryapp.mvp.presenters.impls.MainPresenterImpl
 import com.padcmyanmar.ttm.groceryapp.mvp.views.MainView
 import kotlinx.android.synthetic.main.activity_main.*
+import java.io.IOException
 
 class MainActivity : BaseActivity(), MainView {
 
     private lateinit var mAdapter: GroceryAdapter
     private lateinit var mPresenter: MainPresenter
+    companion object {
+        const val PICK_IMAGE_REQUEST = 1111
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,12 +81,18 @@ class MainActivity : BaseActivity(), MainView {
         mAdapter.setNewData(groceryList)
     }
 
-    override fun showGroceryDialog(name: String, description: String, amount: String) {
+    override fun showGroceryDialog(
+        name: String,
+        description: String,
+        amount: String,
+        image: String?
+    ) {
         val groceryDialog = GroceryDialogFragment.newFragment()
         val bundle = Bundle()
         bundle.putString(BUNDLE_NAME, name)
         bundle.putString(BUNDLE_DESCRIPTION,description)
         bundle.putString(BUNDLE_AMOUNT, amount)
+        bundle.putString(BUNDLE_IMAGE,image)
         groceryDialog.arguments = bundle
         groceryDialog.show(supportFragmentManager, GroceryDialogFragment.TAG_ADD_GROCERY_DIALOG)
     }
@@ -83,4 +100,45 @@ class MainActivity : BaseActivity(), MainView {
     override fun showErrorMessage(message: String) {
         Snackbar.make(window.decorView, message, Snackbar.LENGTH_LONG)
     }
+
+    override fun openGallery() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.P)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data == null || data.data == null) {
+                return
+            }
+
+            val filePath = data.data
+            try {
+
+                filePath?.let {
+                    if (Build.VERSION.SDK_INT >= 29) {
+                        val source: ImageDecoder.Source =
+                            ImageDecoder.createSource(this.contentResolver, filePath)
+
+                        val bitmap = ImageDecoder.decodeBitmap(source)
+                        mPresenter.onPhotoTaken(bitmap)
+                    } else {
+                        val bitmap = MediaStore.Images.Media.getBitmap(
+                            applicationContext.contentResolver, filePath
+                        )
+                        mPresenter.onPhotoTaken(bitmap)
+                    }
+                }
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }
