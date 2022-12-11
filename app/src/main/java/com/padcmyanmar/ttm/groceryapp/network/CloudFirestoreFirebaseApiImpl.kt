@@ -1,14 +1,26 @@
 package com.padcmyanmar.ttm.groceryapp.network
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.util.Log
+import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import com.padcmyanmar.ttm.groceryapp.data.vos.GroceryVO
+
+import java.io.ByteArrayOutputStream
+import java.util.*
+import kotlin.collections.HashMap
 
 object CloudFirestoreFirebaseApiImpl : FirebaseApi{
 
   val db = Firebase.firestore
+    private val storage: FirebaseStorage = FirebaseStorage.getInstance()
+    private val storageReference: StorageReference = storage.reference
 
     override fun getGroceries(
         onSuccess: (groceries: List<GroceryVO>) -> Unit,
@@ -30,7 +42,7 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
                         grocery.name = data?.get("name") as String
                         grocery.description =  data["description"] as String
                         grocery.amount =  (data["amount"] as Long).toInt()
-
+                        grocery.image = data["image"] as String?
                         groceriesList.add(grocery)
 
                     }
@@ -82,12 +94,12 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
 
 
     }
-
-    override fun addGrocery(name: String, description: String, amount: Int) {
+    override fun addGrocery(name: String, description: String, amount: Int, image: String) {
         val groceryMap : HashMap<String,Any> = hashMapOf(
             "name" to name,
             "description" to description,
-            "amount" to amount.toLong()
+            "amount" to amount.toLong(),
+            "image" to image
         )
 
         db.collection("groceries")
@@ -111,5 +123,75 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
            .addOnFailureListener {
                Log.d("Failure","Failed to delete grocery")
            }
+    }
+
+    override fun uploadImageAndEditGrocery(image: Bitmap, grocery: GroceryVO) {
+        val baos = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.JPEG, 100,baos)
+        val data: ByteArray = baos.toByteArray()
+
+        val imageRef: StorageReference = storageReference.child("images/${UUID.randomUUID()}")
+        val uploadTask: UploadTask = imageRef.putBytes(data)
+        uploadTask.addOnFailureListener{
+
+        }.addOnSuccessListener {
+        }
+
+        val urlTask: Task<Uri> = uploadTask.continueWithTask {
+            return@continueWithTask imageRef.downloadUrl
+        }.addOnCompleteListener { task->
+            val imageUrl : String? = task.result?.toString()
+            addGrocery(
+                grocery.name ?: "",
+                grocery.description ?: "",
+                grocery.amount ?: 0,
+                imageUrl ?: ""
+            )
+
+        }
+    }
+
+    override fun getGroceriesByKey(
+        name: String,
+        onSuccess: (grocery:GroceryVO) -> Unit,
+        onFailure: (String) -> Unit
+    ) {
+
+//
+//
+//        db.collection("groceries").document(name).let {
+//
+//
+//            val data = it
+//            var grocery = GroceryVO()
+//            grocery.name = data?.get("name") as String
+//            grocery.description =  data["description"] as String
+//            grocery.amount =  (data["amount"] as Long).toInt()
+//            grocery.image = data["image"] as String?
+//            groceriesList.add(grocery)
+//
+//            onSuccess(    db.collection("groceries").document(name) as GroceryVO)
+//        }
+//        onFailure("Fail")
+
+//        database.child("groceries").addValueEventListener(object : ValueEventListener {
+//            override fun onCancelled(error: DatabaseError) {
+//                onFialure(error.message)
+//            }
+//
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val groceryList = arrayListOf<GroceryVO>()
+//                snapshot.children.forEach { dataSnapShot ->
+//                    dataSnapShot.getValue(GroceryVO::class.java)?.let {
+//                        groceryList.add(it)
+//                    }
+//                }
+//                onSuccess(groceryList)
+//            }
+//        })
+//
+//
+//      return
+
     }
 }
