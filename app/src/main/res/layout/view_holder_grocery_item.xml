@@ -12,18 +12,30 @@
         android:layout_height="match_parent"
         android:padding="@dimen/margin_medium_2">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivGroceryImage"
+
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_marginEnd="@dimen/margin_medium_2"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/margin_medium"
+            android:id="@+id/layoutImage"
             android:layout_width="@dimen/grocery_image_size"
-            android:layout_height="@dimen/grocery_image_size"
-            android:scaleType="centerCrop"
-            android:visibility="visible" />
+            android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:src="@drawable/grocery_store"
+                android:id="@+id/ivGroceryImage"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/grocery_image_size"
+                android:scaleType="centerCrop"
+                android:visibility="visible" />
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/ivGroceryImage"
+            android:layout_toEndOf="@id/layoutImage"
             android:fontFamily="sans-serif-medium"
             android:text="Milk"
             android:textColor="@android:color/black"
@@ -80,7 +92,6 @@
             android:id="@+id/btnFileUpload"
             android:layout_width="@dimen/margin_medium_3"
             android:layout_height="@dimen/margin_medium_3"
-
             android:layout_below="@id/tvCount"
             android:layout_alignParentBottom="true"
             android:layout_marginTop="@dimen/margin_medium_2"

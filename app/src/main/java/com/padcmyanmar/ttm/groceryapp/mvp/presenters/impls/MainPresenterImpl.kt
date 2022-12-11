@@ -43,6 +43,10 @@ class MainPresenterImpl  : MainPresenter, AbstractBasePresenter<MainView>() {
                 mView.showErrorMessage(it)
             }
         )
+
+        mView.displayToolbarTitle(mGroceryModel.getAppNameFromRemoteConfig())
+
+        mView.getGroceryListChangeLayoutFromRemoteConfig(mGroceryModel.getGroceryListChangeLayoutFromRemoteConfig())
     }
 
 

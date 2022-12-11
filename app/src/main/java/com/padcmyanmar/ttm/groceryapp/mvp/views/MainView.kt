@@ -9,4 +9,6 @@ interface MainView : BaseView {
     fun showGroceryDialog(name: String, description: String, amount: String,image:String?)
     fun showErrorMessage(message: String)
     fun openGallery()
+    fun displayToolbarTitle(appNameFromRemoteConfig: String)
+    fun getGroceryListChangeLayoutFromRemoteConfig(groceryListChangeLayoutFromRemoteConfig: Long)
 }

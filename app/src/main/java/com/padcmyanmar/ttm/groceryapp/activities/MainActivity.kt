@@ -12,9 +12,11 @@ import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment
 
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_AMOUNT
@@ -127,6 +129,27 @@ class MainActivity : BaseActivity(), MainView {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+    }
+
+    override fun displayToolbarTitle(title: String) {
+        Log.d("title",title)
+        supportActionBar?.title = title
+    }
+
+    override fun getGroceryListChangeLayoutFromRemoteConfig(changeLayoutFlag: Long) {
+        when(changeLayoutFlag.toInt()){
+            1->{
+                rvGroceries.layoutManager =
+                    GridLayoutManager(applicationContext,2)
+            }
+            else ->{
+                rvGroceries.layoutManager =
+                    LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+            }
+        }
+
+
+        mAdapter.setLayoutFlag(changeLayoutFlag)
     }
 
 
