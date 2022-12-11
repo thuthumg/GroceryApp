@@ -1,6 +1,7 @@
 package com.padcmyanmar.ttm.groceryapp.activities
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.ImageDecoder
 import android.os.Build
@@ -31,8 +32,16 @@ class MainActivity : BaseActivity(), MainView {
 
     private lateinit var mAdapter: GroceryAdapter
     private lateinit var mPresenter: MainPresenter
+    private var loginUserName:String = ""
     companion object {
         const val PICK_IMAGE_REQUEST = 1111
+       private const val BUNDLE_USER_NAME = "BUNDLE_USER_NAME"
+
+        fun newIntent(context: Context,userName:String):Intent {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(BUNDLE_USER_NAME,userName)
+            return intent
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,13 +49,25 @@ class MainActivity : BaseActivity(), MainView {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
         setUpPresenter()
+        getIntentParam()
         setUpRecyclerView()
+        setUpLoginUserName()
 
         setUpActionListeners()
 
         mPresenter.onUiReady(this)
     }
 
+    private fun setUpLoginUserName() {
+        tvLogInUserName.text = "Hello, $loginUserName !"
+    }
+    private fun getIntentParam() {
+
+        loginUserName = intent?.getStringExtra(BUNDLE_USER_NAME).toString()
+
+
+
+    }
     private fun setUpPresenter() {
         mPresenter = getPresenter<MainPresenterImpl, MainView>()
     }

@@ -26,7 +26,18 @@
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:padding="@dimen/margin_medium_2"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="@dimen/text_regular_3x"
+            android:id="@+id/tvLogInUserName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <androidx.recyclerview.widget.RecyclerView
+            android:layout_below="@id/tvLogInUserName"
             android:id="@+id/rvGroceries"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
