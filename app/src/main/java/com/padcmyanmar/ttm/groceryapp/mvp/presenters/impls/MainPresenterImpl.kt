@@ -1,7 +1,9 @@
 package com.padcmyanmar.ttm.groceryapp.mvp.presenters.impls
 
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.lifecycle.LifecycleOwner
+import com.padcmyanmar.ttm.groceryapp.analytics.SCREEN_HOME
 import com.padcmyanmar.ttm.groceryapp.data.models.GroceryModelImpl
 import com.padcmyanmar.ttm.groceryapp.data.vos.GroceryVO
 
@@ -34,7 +36,11 @@ class MainPresenterImpl  : MainPresenter, AbstractBasePresenter<MainView>() {
     }
 
 
-    override fun onUiReady(owner: LifecycleOwner) {
+    override fun onUiReady(
+        context: Context,
+        owner: LifecycleOwner
+    ) {
+        sendEventsToFirebaseAnalytics(context, SCREEN_HOME)
         mGroceryModel.getGroceries(
             onSuccess = {
                 mView.showGroceryData(it)

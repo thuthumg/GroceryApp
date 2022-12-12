@@ -1,6 +1,10 @@
 package com.padcmyanmar.ttm.groceryapp.mvp.presenters.impls
 
+import android.content.Context
 import androidx.lifecycle.LifecycleOwner
+import com.padcmyanmar.ttm.groceryapp.analytics.PARAMETER_EMAIL
+import com.padcmyanmar.ttm.groceryapp.analytics.SCREEN_LOGIN
+import com.padcmyanmar.ttm.groceryapp.analytics.TAP_LOGIN
 import com.padcmyanmar.ttm.groceryapp.data.models.AuthenticationModel
 import com.padcmyanmar.ttm.groceryapp.data.models.AuthenticationModelImpl
 import com.padcmyanmar.ttm.groceryapp.data.models.GroceryModel
@@ -14,13 +18,18 @@ class LoginPresenterImpl : LoginPresenter, AbstractBasePresenter<LoginView>() {
     private val mAuthenticationModel: AuthenticationModel = AuthenticationModelImpl
     private val mGroceryModel: GroceryModel = GroceryModelImpl
 
-    override fun onUiReady(owner: LifecycleOwner) {
+    override fun onUiReady(
+        context: Context,
+        owner: LifecycleOwner
+    ){
+        sendEventsToFirebaseAnalytics(context, SCREEN_LOGIN)
         mGroceryModel.setUpRemoteConfigWithDefaultValues()
         mGroceryModel.fetchRemoteConfigs()
 
     }
 
-    override fun onTapLogin(email: String, password: String) {
+    override fun onTapLogin(context: Context,email: String, password: String) {
+        sendEventsToFirebaseAnalytics(context, TAP_LOGIN, PARAMETER_EMAIL, email)
         mAuthenticationModel.login(email, password, onSuccess = {
             mView.navigateToHomeScreen()
         }, onFailure = {
