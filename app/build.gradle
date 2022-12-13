@@ -58,6 +58,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-config-ktx'
 
 
+    implementation 'com.google.firebase:firebase-crashlytics'
+
+
 
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     // Glide
