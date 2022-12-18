@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import com.padcmyanmar.ttm.groceryapp.analytics.PARAMETER_EMAIL
 import com.padcmyanmar.ttm.groceryapp.analytics.SCREEN_HOME
+import com.padcmyanmar.ttm.groceryapp.analytics.SCREEN_REGISTER
 import com.padcmyanmar.ttm.groceryapp.analytics.TAP_REGISTER
 import com.padcmyanmar.ttm.groceryapp.data.models.AuthenticationModel
 import com.padcmyanmar.ttm.groceryapp.data.models.AuthenticationModelImpl
@@ -29,6 +30,6 @@ class RegisterPresenterImpl  : RegisterPresenter, AbstractBasePresenter<Register
         context: Context,
         owner: LifecycleOwner
     ) {
-        sendEventsToFirebaseAnalytics(context, SCREEN_HOME)
+        sendEventsToFirebaseAnalytics(context, SCREEN_REGISTER)
     }
 }

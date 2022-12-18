@@ -7,7 +7,6 @@ import com.padcmyanmar.ttm.groceryapp.mvp.views.MainView
 
 interface MainPresenter : BasePresenter<MainView> , GroceryViewItemActionDelegate {
     fun onTapAddGrocery(name: String, description: String, amount: Int, imageUrl:String)
-    fun onPhotoTaken(bitmap : Bitmap)
-    fun getGroceriesByKey(name: String, onSuccess: (grocery: GroceryVO) -> Unit, onFailure: (String) -> Unit)
+    fun onPhotoTaken(bitmap : Bitmap,onSuccess: (returnUrlString: String)->Unit)
 
 }

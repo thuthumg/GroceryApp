@@ -21,7 +21,7 @@ class GroceryAdapter(private val mDelegate: GroceryViewItemActionDelegate) : Bas
     }
  private var changeLayoutFlag = 0
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroceryViewHolder {
-    Log.d("flagcheck","$changeLayoutFlag")
+    Log.d("GroceryAdapter","$changeLayoutFlag")
       when(changeLayoutFlag)
        {
           VIEW_TYPE_LINEAR->{

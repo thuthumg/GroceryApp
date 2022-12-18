@@ -21,7 +21,7 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
   val db = Firebase.firestore
     private val storage: FirebaseStorage = FirebaseStorage.getInstance()
     private val storageReference: StorageReference = storage.reference
-
+    var returnUrlString:String? = ""
     override fun getGroceries(
         onSuccess: (groceries: List<GroceryVO>) -> Unit,
         onFialure: (String) -> Unit
@@ -125,7 +125,7 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
            }
     }
 
-    override fun uploadImageAndEditGrocery(image: Bitmap, grocery: GroceryVO) {
+    override fun uploadImageAndEditGrocery(image: Bitmap, grocery: GroceryVO,onSuccess: (returnUrlString: String?) -> Unit) {
         val baos = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100,baos)
         val data: ByteArray = baos.toByteArray()
@@ -141,6 +141,7 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
             return@continueWithTask imageRef.downloadUrl
         }.addOnCompleteListener { task->
             val imageUrl : String? = task.result?.toString()
+            returnUrlString = imageUrl
             addGrocery(
                 grocery.name ?: "",
                 grocery.description ?: "",
@@ -148,50 +149,9 @@ object CloudFirestoreFirebaseApiImpl : FirebaseApi{
                 imageUrl ?: ""
             )
 
+            onSuccess(returnUrlString)
+
         }
     }
 
-    override fun getGroceriesByKey(
-        name: String,
-        onSuccess: (grocery:GroceryVO) -> Unit,
-        onFailure: (String) -> Unit
-    ) {
-
-//
-//
-//        db.collection("groceries").document(name).let {
-//
-//
-//            val data = it
-//            var grocery = GroceryVO()
-//            grocery.name = data?.get("name") as String
-//            grocery.description =  data["description"] as String
-//            grocery.amount =  (data["amount"] as Long).toInt()
-//            grocery.image = data["image"] as String?
-//            groceriesList.add(grocery)
-//
-//            onSuccess(    db.collection("groceries").document(name) as GroceryVO)
-//        }
-//        onFailure("Fail")
-
-//        database.child("groceries").addValueEventListener(object : ValueEventListener {
-//            override fun onCancelled(error: DatabaseError) {
-//                onFialure(error.message)
-//            }
-//
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val groceryList = arrayListOf<GroceryVO>()
-//                snapshot.children.forEach { dataSnapShot ->
-//                    dataSnapShot.getValue(GroceryVO::class.java)?.let {
-//                        groceryList.add(it)
-//                    }
-//                }
-//                onSuccess(groceryList)
-//            }
-//        })
-//
-//
-//      return
-
-    }
 }

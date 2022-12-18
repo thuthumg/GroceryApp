@@ -19,14 +19,8 @@ interface GroceryModel {
 
    // fun editGrocery(name: String, description: String, amount: Int)
 
-    fun uploadImageAndUpdateGrocery(grocery : GroceryVO, image : Bitmap)
+    fun uploadImageAndUpdateGrocery(grocery : GroceryVO, image : Bitmap,onSuccess: (returnUrlString:String?) -> Unit)
 
-
-    fun getGroceriesByKey(
-        name:String,
-        onSuccess: (grocery: GroceryVO) -> Unit,
-        onFailure: (String) -> Unit
-    )
 
     fun setUpRemoteConfigWithDefaultValues()
 

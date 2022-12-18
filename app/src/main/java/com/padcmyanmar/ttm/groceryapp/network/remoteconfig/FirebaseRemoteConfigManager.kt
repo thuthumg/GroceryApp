@@ -17,12 +17,9 @@ object FirebaseRemoteConfigManager {
     }
 
     fun setUpRemoteConfigWithDefaultValues() {
-       /* val defaultValues: Map<String, Any> = hashMapOf(
-            "mainScreenAppBarTitle" to "Grocery-App"
-        )*/
-
         val defaultValues: Map<String, Any> = hashMapOf(
-            "manScreenGroceryListChangeLayout" to 0
+            "mainScreenAppBarTitle" to "Grocery-App"
+        ,"manScreenGroceryListChangeLayout" to 0
         )
 
         remoteConfig.setDefaultsAsync(defaultValues)

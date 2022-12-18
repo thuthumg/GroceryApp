@@ -6,6 +6,7 @@ import android.graphics.ImageDecoder
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,10 @@ import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.padcmyanmar.ttm.groceryapp.R
 import com.padcmyanmar.ttm.groceryapp.activities.MainActivity
+import com.padcmyanmar.ttm.groceryapp.data.vos.GroceryVO
 import com.padcmyanmar.ttm.groceryapp.mvp.presenters.MainPresenter
 import com.padcmyanmar.ttm.groceryapp.mvp.presenters.impls.MainPresenterImpl
+import com.padcmyanmar.ttm.groceryapp.mvp.views.MainView
 import kotlinx.android.synthetic.main.dialog_add_grocery.*
 import kotlinx.android.synthetic.main.dialog_add_grocery.view.*
 import kotlinx.android.synthetic.main.view_holder_grocery_item.view.*
@@ -69,6 +72,13 @@ class GroceryDialogFragment : DialogFragment() {
             dismiss()
         }
         view.btnFileUploadDialog.setOnClickListener {
+           var groceryVO = GroceryVO(
+               etGroceryName.text.toString(),
+               etDescription.text.toString(),
+               etAmount.text.toString().toInt(),
+               mImageUrl
+           )
+            mPresenter.onTapFileUploadForDialog(groceryVO)
             openGallery()
         }
 
@@ -77,11 +87,12 @@ class GroceryDialogFragment : DialogFragment() {
     private fun setUpPresenter() {
         activity?.let {
             mPresenter = ViewModelProviders.of(it).get(MainPresenterImpl::class.java)
+
         }
     }
 
 
-    fun openGallery() {
+   fun openGallery() {
         val intent = Intent()
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
@@ -115,35 +126,26 @@ class GroceryDialogFragment : DialogFragment() {
                         context?.contentResolver?.let {
                             val source: ImageDecoder.Source =
                                 ImageDecoder.createSource(it, filePath)
-
+                           // pbLoading.visibility = View.VISIBLE
                             val bitmap = ImageDecoder.decodeBitmap(source)
-                            mPresenter.onPhotoTaken(bitmap)
-//                            mPresenter.getGroceriesByKey(etGroceryName.text.toString(), onSuccess = { it ->
-//                                it.let { groceryVO ->
-//                                    mImageUrl = groceryVO.image.toString()
-//                                }
-//
-//
-//                            }, onFailure = {
-//
-//                            })
+                             mPresenter.onPhotoTaken(bitmap, onSuccess = {
+                                 mImageUrl = it
+                                // pbLoading.visibility = View.GONE
+                             })
+
                         }
 
 
                     } else {
+                       // pbLoading.visibility = View.VISIBLE
                         val bitmap = MediaStore.Images.Media.getBitmap(
                             context?.applicationContext?.contentResolver, filePath
                         )
-                        mPresenter.onPhotoTaken(bitmap)
-//                        mPresenter.getGroceriesByKey(etGroceryName.text.toString(), onSuccess = { it ->
-//                            it.let { groceryVO ->
-//                                mImageUrl = groceryVO.image.toString()
-//                            }
-//
-//
-//                        }, onFailure = {
-//
-//                        })
+                        mPresenter.onPhotoTaken(bitmap, onSuccess = {
+                            mImageUrl = it
+                           // pbLoading.visibility = View.GONE
+                        })
+
                     }
                 }
 

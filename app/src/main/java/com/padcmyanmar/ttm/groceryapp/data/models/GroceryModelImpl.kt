@@ -1,14 +1,16 @@
 package com.padcmyanmar.ttm.groceryapp.data.models
 import android.graphics.Bitmap
+import android.util.Log
 import com.padcmyanmar.ttm.groceryapp.data.vos.GroceryVO
+import com.padcmyanmar.ttm.groceryapp.network.CloudFirestoreFirebaseApiImpl
 import com.padcmyanmar.ttm.groceryapp.network.FirebaseApi
 import com.padcmyanmar.ttm.groceryapp.network.RealtimeDatabaseFirebaseApiImpl
 import com.padcmyanmar.ttm.groceryapp.network.remoteconfig.FirebaseRemoteConfigManager
 
 
 object GroceryModelImpl : GroceryModel {
-    override var mFirebaseApi: FirebaseApi = RealtimeDatabaseFirebaseApiImpl
- //   override var mFirebaseApi: FirebaseApi = CloudFirestoreFirebaseApiImpl
+  //  override var mFirebaseApi: FirebaseApi = RealtimeDatabaseFirebaseApiImpl
+    override var mFirebaseApi: FirebaseApi = CloudFirestoreFirebaseApiImpl
 
     override var mFirebaseRemoteConfigManager: FirebaseRemoteConfigManager = FirebaseRemoteConfigManager
 
@@ -29,20 +31,14 @@ object GroceryModelImpl : GroceryModel {
 //
 //    }
 
-    override fun uploadImageAndUpdateGrocery(grocery: GroceryVO, image: Bitmap){
-       return mFirebaseApi.uploadImageAndEditGrocery(image, grocery)
+    override fun uploadImageAndUpdateGrocery(grocery: GroceryVO, image: Bitmap,
+                                             onSuccess: (returnStringData:String?) -> Unit){
+
+        Log.d("GroceryModelImpl","uploadImageAndUpdateGrocery")
+       return mFirebaseApi.uploadImageAndEditGrocery(image, grocery, onSuccess)
     }
 
-    override fun getGroceriesByKey(
-        name:String,
-        onSuccess: (grocery: GroceryVO) -> Unit,
-        onFailure: (String) -> Unit
-    ){
-        mFirebaseApi.getGroceriesByKey(name,
-            onSuccess,
-        onFailure)
 
-    }
 
     override fun setUpRemoteConfigWithDefaultValues() {
         mFirebaseRemoteConfigManager.setUpRemoteConfigWithDefaultValues()

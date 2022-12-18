@@ -21,6 +21,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_AMOUNT
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_DESCRIPTION
 import com.padcmyanmar.ttm.groceryapp.dialogs.GroceryDialogFragment.Companion.BUNDLE_IMAGE
@@ -61,7 +62,23 @@ class MainActivity : BaseActivity(), MainView {
 
         mPresenter.onUiReady(this,this)
 
-        addCrashButton()
+       // addCrashButton()
+
+        FirebaseDynamicLinks.getInstance()
+            .getDynamicLink(intent)
+            .addOnSuccessListener {
+                it?.let {
+                    pendingDynamicLinkData ->
+                    val deepLink = pendingDynamicLinkData.link
+                    deepLink?.let {
+                        deepLink ->
+                        Log.d("deepLink",deepLink.toString())
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Log.d("error",it.localizedMessage)
+            }
     }
     private fun addCrashButton(){
         val crashButton = Button(this)
@@ -184,12 +201,12 @@ class MainActivity : BaseActivity(), MainView {
                             ImageDecoder.createSource(this.contentResolver, filePath)
 
                         val bitmap = ImageDecoder.decodeBitmap(source)
-                        mPresenter.onPhotoTaken(bitmap)
+                        mPresenter.onPhotoTaken(bitmap, onSuccess = {})
                     } else {
                         val bitmap = MediaStore.Images.Media.getBitmap(
                             applicationContext.contentResolver, filePath
                         )
-                        mPresenter.onPhotoTaken(bitmap)
+                        mPresenter.onPhotoTaken(bitmap, onSuccess = {})
                     }
                 }
 

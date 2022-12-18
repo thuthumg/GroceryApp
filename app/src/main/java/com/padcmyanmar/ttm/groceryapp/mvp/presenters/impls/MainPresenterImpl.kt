@@ -2,6 +2,7 @@ package com.padcmyanmar.ttm.groceryapp.mvp.presenters.impls
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.LifecycleOwner
 import com.padcmyanmar.ttm.groceryapp.analytics.SCREEN_HOME
 import com.padcmyanmar.ttm.groceryapp.data.models.GroceryModelImpl
@@ -21,10 +22,16 @@ class MainPresenterImpl  : MainPresenter, AbstractBasePresenter<MainView>() {
     override fun onTapAddGrocery(name: String, description: String, amount: Int, imageUrl: String) {
         mGroceryModel.addGrocery(name,description,amount,imageUrl)
     }
-    override fun onPhotoTaken(bitmap: Bitmap){
+    override fun onPhotoTaken(bitmap: Bitmap,onSuccess: (returnUrlString: String) -> Unit){
+
+
 
         mChosenGroceryForFileUpload?.let {
-            mGroceryModel.uploadImageAndUpdateGrocery(it, bitmap)
+            mGroceryModel.uploadImageAndUpdateGrocery(it, bitmap, onSuccess = {
+                it?.let {
+                        it1 -> onSuccess(it1)
+                }
+            })
         }
 
     }
@@ -35,7 +42,10 @@ class MainPresenterImpl  : MainPresenter, AbstractBasePresenter<MainView>() {
         mView.openGallery();
     }
 
-
+    override fun onTapFileUploadForDialog(grocery: GroceryVO) {
+        mChosenGroceryForFileUpload = grocery
+       // mView.openGallery();
+    }
     override fun onUiReady(
         context: Context,
         owner: LifecycleOwner
@@ -65,18 +75,6 @@ class MainPresenterImpl  : MainPresenter, AbstractBasePresenter<MainView>() {
         mView.showGroceryDialog(name, description, amount.toString(),image)
     }
 
-    override fun getGroceriesByKey(name: String,onSuccess: (grocery: GroceryVO) -> Unit,onFailure: (String) -> Unit)
-    {
-        mGroceryModel.getGroceriesByKey(
-            name,
-            onSuccess = {
-               onSuccess(it)
-            },
-            onFailure = {
-               onFailure(it)
-            }
-        )
-    }
 
 
 }
